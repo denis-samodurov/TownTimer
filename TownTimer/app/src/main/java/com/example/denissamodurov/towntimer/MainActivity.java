@@ -3,9 +3,11 @@ package com.example.denissamodurov.towntimer;
 import android.media.MediaPlayer;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.*;
 import android.widget.*;
+
+import com.example.denissamodurov.towntimer.imageframes.House;
+import com.example.denissamodurov.towntimer.imageframes.HouseFactory;
 
 public class MainActivity extends AppCompatActivity implements Observer {
 
@@ -17,6 +19,7 @@ public class MainActivity extends AppCompatActivity implements Observer {
     private SeekBar mSeekbarSetTimer;
     private ProjectTimer mProjectTimer;
     private MediaPlayer mEndOfTimer;
+    private House mHouse;
 
 
     @Override
@@ -52,6 +55,12 @@ public class MainActivity extends AppCompatActivity implements Observer {
             public void onClick(View v) {
                 int second = getSecondFromSeekbar();
                 mProjectTimer.runTimer(second);
+
+                mHouse = HouseFactory.createHouse(House.HouseLabel.PENTHOUSE);
+                mHouse.setHouseImage((ImageView) findViewById(R.id.house_image));
+                mHouse.setStartTimeForTimer(second);
+
+                mProjectTimer.registerObserver(mHouse);
                 mStartButton.setEnabled(false);
             }
         });

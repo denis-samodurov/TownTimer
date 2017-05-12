@@ -8,7 +8,8 @@
     android:layout_gravity="center"
     android:gravity="center"
     android:orientation="vertical"
-    tools:context="com.example.denissamodurov.towntimer.MainActivity">
+    tools:context="com.example.denissamodurov.towntimer.MainActivity"
+    android:weightSum="1">
 
     <TextView
         android:id="@+id/time_for_timer"
@@ -24,6 +25,13 @@
         android:max="119"
         android:progress="19"
         />
+
+    <ImageView
+        android:id="@+id/house_image"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:srcCompat="@mipmap/penthouse_end"
+        android:layout_weight="0.11"/>
 
     <Button
         android:id="@+id/start_button"
