@@ -114,6 +114,7 @@ public class MainActivity extends AppCompatActivity implements Observer {
         }
     }
 
+    //TODO сделать красирое отображение таймера
     private void setupTimerClockFace(long secondLeft) {
         long minute = secondLeft / SECOND_IN_MINUTE;
         long second = secondLeft % SECOND_IN_MINUTE;

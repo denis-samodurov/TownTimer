@@ -1,17 +1,15 @@
 package com.example.denissamodurov.towntimer;
 
 import android.os.CountDownTimer;
-import android.widget.Toast;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 /**
  * Created by denissamodurov on 07/05/2017.
  */
 
 public class ProjectTimer implements Observable, Timer{
-    private static int MILLISECONDS_IN_SECOND = 1000;
+    private static int MILLISECONDS_IN_SECOND = 10;
 
     List<Observer> mObservers;
     long mSecondLeft;
@@ -45,19 +43,25 @@ public class ProjectTimer implements Observable, Timer{
     }
 
     private void startTimer(){
-        CountDownTimer countDownTimer = new CountDownTimer(mSecondLeft * MILLISECONDS_IN_SECOND, MILLISECONDS_IN_SECOND) {
-            @Override
-            public void onTick(long millisUntilFinished) {
-                mSecondLeft = millisUntilFinished / MILLISECONDS_IN_SECOND;
-                notifyObserver();
-            }
+        CountDownTimer countDownTimer = new AppCountDownTimer(mSecondLeft * MILLISECONDS_IN_SECOND, MILLISECONDS_IN_SECOND).start();
+    }
 
-            @Override
-            public void onFinish() {
-                mIsTimerEnd = true;
-                mSecondLeft = 0;
-                notifyObserver();
-            }
-        }.start();
+    class AppCountDownTimer extends CountDownTimer{
+        public AppCountDownTimer(long millisInFuture, long countDownInterval) {
+            super(millisInFuture, countDownInterval);
+        }
+
+        @Override
+        public void onTick(long millisUntilFinished) {
+            mSecondLeft = millisUntilFinished / MILLISECONDS_IN_SECOND;
+            notifyObserver();
+        }
+
+        @Override
+        public void onFinish() {
+            mIsTimerEnd = true;
+            mSecondLeft = 0;
+            notifyObserver();
+        }
     }
 }

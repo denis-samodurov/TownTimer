@@ -10,18 +10,24 @@ import com.example.denissamodurov.towntimer.Observer;
  */
 
 public class EmptyHouse extends House implements Observer {
+    //TODO место потенциальной ошибки из-за того, чтобы эти методы перевают номера ресурсов
     @Override
-    public void update(long secondLeft, boolean isEndTimer) {
-
+    public int getStartImage() {
+        return 0;
     }
 
     @Override
-    public void setHouseImage(ImageView houseImage) {
-
+    public int getEarlyMiddleImage() {
+        return 0;
     }
 
     @Override
-    public void setStartTimeForTimer(long timerSecond) {
+    public int getLateMiddleImage() {
+        return 0;
+    }
 
+    @Override
+    public int getEndImage() {
+        return 0;
     }
 }
