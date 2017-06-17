@@ -1,36 +1,37 @@
 package com.example.denissamodurov.towntimer;
 
+import android.app.Activity;
+import android.content.Intent;
 import android.media.MediaPlayer;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.*;
 import android.widget.*;
 
-import com.example.denissamodurov.towntimer.imageframes.House;
-import com.example.denissamodurov.towntimer.imageframes.HouseFactory;
+import com.example.denissamodurov.towntimer.houseInstanceClass.House;
+import com.example.denissamodurov.towntimer.houseInstanceClass.HouseFactory;
 
 public class MainActivity extends AppCompatActivity implements Observer {
-
+    private static final int REQUEST_CODE_CHEAT = 0;
     private static int SECOND_IN_MINUTE = 60;
 
     private TextView mTimerClockFace;
     private TextView mTimeForTimer;
     private Button mStartButton;
     private SeekBar mSeekbarSetTimer;
+    private ImageView mHouseImageView;
     private ProjectTimer mProjectTimer;
     private MediaPlayer mEndOfTimer;
     private House mHouse;
+    private House.HouseLabel mHouseLabelToCreate;
+    private int mCurrentHouseLabelPosition;
 
-
-    @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         setupGUI();
         setupTimer();
         setupMusic();
-        setupStartButton();
-        setupSeekBar();
     }
 
     private void setupGUI(){
@@ -38,6 +39,10 @@ public class MainActivity extends AppCompatActivity implements Observer {
         mTimerClockFace = (TextView) findViewById(R.id.timer_clock_face);
         mStartButton = (Button) findViewById(R.id.start_button);
         mSeekbarSetTimer = (SeekBar) findViewById(R.id.seekbar_set_timer);
+        setupStartButton();
+        setupHouseImageView();
+        setupSeekBar();
+        setupDefaultSettings();
     }
 
     private void setupTimer(){
@@ -53,11 +58,11 @@ public class MainActivity extends AppCompatActivity implements Observer {
         mStartButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                int second = getSecondFromSeekbar();
+                int second = getSecondsFromSeekbar();
                 mProjectTimer.runTimer(second);
 
-                mHouse = HouseFactory.createHouse(House.HouseLabel.PENTHOUSE);
-                mHouse.setHouseImage((ImageView) findViewById(R.id.house_image));
+                mHouse = HouseFactory.createHouse(mHouseLabelToCreate);
+                mHouse.setHouseImage(mHouseImageView);
                 mHouse.setStartTimeForTimer(second);
 
                 mProjectTimer.registerObserver(mHouse);
@@ -66,11 +71,22 @@ public class MainActivity extends AppCompatActivity implements Observer {
         });
     }
 
+    private void setupHouseImageView(){
+        mHouseImageView = (ImageView) findViewById(R.id.house_image);
+        mHouseImageView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = HouseSelectedListActivity.newIntent(MainActivity.this, mCurrentHouseLabelPosition);
+                startActivityForResult(intent, REQUEST_CODE_CHEAT);
+            }
+        });
+    }
+
     private void setupSeekBar(){
         mSeekbarSetTimer.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-                getSecondFromSeekbar();
+                getSecondsFromSeekbar();
             }
 
             @Override
@@ -80,12 +96,32 @@ public class MainActivity extends AppCompatActivity implements Observer {
 
             @Override
             public void onStopTrackingTouch(SeekBar eekBar) {
-                getSecondFromSeekbar();
+                getSecondsFromSeekbar();
             }
         });
     }
 
-    private int getSecondFromSeekbar(){
+    private void setupDefaultSettings(){
+        mCurrentHouseLabelPosition = DefaultSettings.DEFAULT_START_POSITION;
+        setImageResourceForHouseImage();
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (resultCode != Activity.RESULT_OK) {
+            return;
+        }
+        mCurrentHouseLabelPosition = HouseSelectedListActivity.getCurrentPosition(data);
+        setImageResourceForHouseImage();
+    }
+
+    private void setImageResourceForHouseImage() {
+        mHouseLabelToCreate = House.HouseLabel.values()[mCurrentHouseLabelPosition];
+        int currentHouseEndImage = HouseFactory.getHouseEndImage(mHouseLabelToCreate);
+        mHouseImageView.setImageResource(currentHouseEndImage);
+    }
+
+    private int getSecondsFromSeekbar(){
         int minuteAlter = 1;
         String dataFromSeekbar = String.valueOf(mSeekbarSetTimer.getProgress());
         int minuteForTimer = Integer.parseInt(dataFromSeekbar) + minuteAlter;

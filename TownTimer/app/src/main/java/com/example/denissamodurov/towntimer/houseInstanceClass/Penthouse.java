@@ -1,6 +1,4 @@
-package com.example.denissamodurov.towntimer.imageframes;
-
-import android.widget.ImageView;
+package com.example.denissamodurov.towntimer.houseInstanceClass;
 
 import com.example.denissamodurov.towntimer.R;
 
